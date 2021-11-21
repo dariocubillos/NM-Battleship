@@ -1,6 +1,6 @@
-import { Cordinates } from "../interfaces/cordinates";
+import { Cordinate } from "../interfaces/cordinate";
 
 export interface Ship {
   name: string;
-  position: Cordinates[];
+  position: Cordinate[];
 }
