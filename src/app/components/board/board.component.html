@@ -1,1 +1,15 @@
-<p>board works!</p>
+<div class="row px-4">
+
+  <div class="col-10 pt-4">
+    <div class="board-container">
+      <div class="row" *ngFor="let in of counter(10); let rowBoard = index">
+        <div id="{{rowBoard}}-{{colBoard}}" class="col-1 blue-board" (click)="clickByUser(rowBoard,colBoard)" *ngFor="let in of counter(10); let colBoard = index">
+          <span class="text-cordinate">{{rowBoard}}-{{colBoard}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-2">
+
+  </div>
+</div>
