@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { BoardSize } from '../../enums/board-size-enum';
 import { ShipName } from '../../enums/ship-names-enum';
 import { Cordinate } from '../../interfaces/cordinate';
 import { Ship } from '../../models/ship.model';
+declare var $: any;
 
 @Component({
   selector: 'app-board',
@@ -11,69 +12,126 @@ import { Ship } from '../../models/ship.model';
 })
 export class BoardComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('customTurnsInput') customTurns: ElementRef | undefined;
+
   ships: Ship[] = [];
   usedCordinates: Cordinate[] =[];
+  remainingTurns: number = 0;
+  remainingObjetives: number = BoardSize.objectives;
+  $: any = $;
+
+  @HostListener('document:click', ['$event'])
+  clickout() {
+    if (this.remainingTurns === 0){
+      setTimeout(() => { $("#initGameModal").modal('show');}, 200);
+    }
+  }
 
   constructor() {
-
-
-    this.ships.push({name: ShipName.aircraftCarrier, position: this.getPosition(ShipName.aircraftCarrier)});
-
-    this.usedCordinates.push(...this.ships[0].position);
-
-    this.ships.push(...this.addManyShips(ShipName.cruise, 2));
-
-    this.ships.push(...this.addManyShips(ShipName.destroyers, 3));
-
-    this.ships.push(...this.addManyShips(ShipName.frigate, 4));
-
-    console.log(this.ships);
-
-
-
+    this.setupShips();
   }
 
 
   ngAfterViewInit(): void {
-
-    // this.showShips();
+    this.showShips(); // for test
+    $("#initGameModal").modal('show');
   }
 
   ngOnInit(): void {
 
   }
-
-
-
-  private showShips():void {
-    this.ships.forEach(ship => {
-      for (let index = 0; index < ship.position.length; index++) {
-        const cordinate = ship.position[index];
-        document.getElementById(`${cordinate.y}-${cordinate.x}`)?.style.setProperty('background-color',this.getVisualShip(ship.name));
-      }
-    });
+  newGame(){
+    this.resetGame();
   }
 
+  resetGame():void {
+    this.ships = [];
+    this.usedCordinates=[];
+    this.remainingTurns = 0;
+    this.remainingObjetives = BoardSize.objectives;
+    this.cleanBoard();
+    this.setupShips();
+  }
 
-  counter(seed: number) {
+  setupShips():void {
+    this.ships.push({name: ShipName.aircraftCarrier, position: this.getPosition(ShipName.aircraftCarrier)});
+    this.usedCordinates.push(...this.ships[0].position);
+    this.ships.push(...this.addManyShips(ShipName.cruise, 2));
+    this.ships.push(...this.addManyShips(ShipName.destroyers, 3));
+    this.ships.push(...this.addManyShips(ShipName.frigate, 4));
+  }
+
+  saveTurns(turns:number | string):void {
+    if (turns !== 0 && turns !== '') {
+      this.remainingTurns = Number(turns);
+      $("#initGameModal").modal('hide');
+    }
+  }
+
+  counter(seed: number): Array<any> {
     return new Array(seed);
   }
 
   clickByUser(positionY: any, positionX: any): void {
+    let found= false;
+    let shipSelected;
+    let removeShipCordinate;
+    if (this.remainingTurns > -1) {
+      this.remainingTurns--;
+    }
     this.ships.forEach(ship => {
       for (let index = 0; index < ship.position.length; index++) {
         const cordinate = ship.position[index];
         if (positionY === cordinate.y && positionX === cordinate.x) {
-          document.getElementById(`${cordinate.x}-${cordinate.y}`)?.style.setProperty('background-color',this.getVisualShip(ship.name));
+          found = true;
+          shipSelected = ship;
+          removeShipCordinate = ship.position[index];
+          this.remainingObjetives--;
+          document.getElementById(`${cordinate.x}-${cordinate.y}`)?.style.setProperty('background-color','red');
         }
+      }
+    });
+    if (!found) {
+      document.getElementById(`${positionX}-${positionY}`)?.style.setProperty('background-color','gray');
+    }else {
+      // remove a cordinate of ship and check if we can cross the ship
+    }
+    this.checkEnd();
+  }
+
+  showShips():void {
+    this.ships.forEach(ship => {
+      for (let index = 0; index < ship.position.length; index++) {
+        const cordinate = ship.position[index];
+        document.getElementById(`${cordinate.x}-${cordinate.y}`)?.style.setProperty('background-color',this.getVisualShip(ship.name));
       }
     });
   }
 
-  private getVisualShip(shipName:string):string {
+  private cleanBoard():void {
+    for (let x = 0; x <= 9; x++) {
+      for (let y = 0; y <= 9; y++) {
+        document.getElementById(`${x}-${y}`)?.style.setProperty('background-color','rgb(43, 184, 250)');
+      }
+    }
+  }
+
+  private checkEnd(): void {
+    if (this.remainingObjetives === 0) {
+      console.log('WIN!!!'); // add the win mensage
+      this.resetGame();
+    }else {
+      if (this.remainingTurns === 0) {
+        console.log('LOSE!!!'); // add the lose mensage
+        this.resetGame();
+      }
+    }
+  }
+
+  private getVisualShip(shipName:string): string {
     switch (shipName) {
       case ShipName.aircraftCarrier:
-      return 'red';
+      return 'green';
 
       case ShipName.cruise:
       return 'blue';
@@ -86,7 +144,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private addManyShips(nameShip:string, quantity:number):Ship[]{
+  private addManyShips(nameShip:string, quantity:number): Ship[] {
     let result: Ship[] = [];
     for (let i = 0; i < quantity; i++) {
       let tempShip = {name:nameShip, position: this.getPosition(nameShip)};
@@ -140,7 +198,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
       x:this.randomIntFromInterval(BoardSize.min,BoardSize.max),
       y:this.randomIntFromInterval(BoardSize.min,BoardSize.max)
       });
-
     if (result[0].x + (shipSize--) < BoardSize.max) {
       for (let i = 0; i < shipSize; i++) {
         result.push({x: (result[i].x+1), y: result[0].y});
@@ -162,11 +219,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
     return cordinates.some(cordinate => cordinate.x === newCordinate.x  && cordinate.y ===  newCordinate.y);
   }
 
-
-  private randomChoice(): boolean{
-    return Math.random() < 0.5 ;
-  }
-
   /**
    *
    * @param min number range
@@ -178,5 +230,4 @@ export class BoardComponent implements OnInit, AfterViewInit {
     max = max > BoardSize.max ? BoardSize.max: max;
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-
 }

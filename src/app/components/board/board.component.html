@@ -1,5 +1,38 @@
+<h5 class="main-title">Targets hit will be marked in red, in case of missing a shot, the string will be painted in gray.</h5>
+<div class="modal fade" id="initGameModal" tabindex="-1" role="dialog" aria-labelledby="initGameTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="initGameTitle">Choose difficulty</h4>
+      </div>
+      <p class="font-weight-bold pt-4 initgame-text">Choose an option to start the game.</p>
+      <div class="modal-body">
+        <div class="pt-1 d-flex justify-content-center">
+          <button type="button" class="btn btn-primary button-difficulty" (click)="saveTurns(-1);">Easy 👶 - ∞ turns</button>
+        </div>
+        <div class="pb-2 pt-4 d-flex justify-content-center">
+          <button type="button" class="btn btn-warning button-difficulty" (click)="saveTurns(100);">Medium  🧒 - 100 turns</button>
+        </div>
+        <div class="pt-2 d-flex justify-content-center">
+          <button type="button" class="btn btn-danger button-difficulty" (click)="saveTurns(50);">Hard 👽 - 50 turns</button>
+        </div>
+        <div class="pt-4 d-flex justify-content-center">
+          <div class="input-group input-group-size mb-3">
+            <input id="customTurnsInput"  #customTurnsInput type="number"  min="20" class="form-control" placeholder="Custom turns" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" (click)="saveTurns(customTurns?.nativeElement.value);" type="button">Get started!</button>
+            </div>
+          </div>
+        </div>
+        <div class="pt-2 d-flex justify-content-center">
+          <button type="button" class="btn btn-outline-danger button-difficulty"  (click)="$('#initGameModal').modal('hide')" [routerLink]="'/'">Exit ↩️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="row px-4">
-  <div class="col-10 pt-4">
+  <div class="col-8 pt-1">
     <div class="board-container">
       <div class="row" *ngFor="let in of counter(10); let rowBoard = index">
         <div id="{{colBoard}}-{{rowBoard}}" class="col-1 blue-board" (click)="clickByUser(rowBoard,colBoard)" *ngFor="let in of counter(10); let colBoard = index">
@@ -8,6 +41,59 @@
       </div>
     </div>
   </div>
-  <div class="col-2">
+  <div class="col-4">
+    <h1 class="main-title">Remaining turns: {{remainingTurns < 0 ? '∞': remainingTurns}}</h1>
+    <div class="row">
+      <div class="col-12">
+        <img class="aircraft-size" src="../../../assets/images/airc.png" alt="">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <img  class="cruiser-size" src="../../../assets/images/cru.png" alt="">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <img  class="cruiser-size" src="../../../assets/images/cru.png" alt="">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <img class="destroyer-size" src="../../../assets/images/dest.png" alt="">
+      </div>
+      <div class="col-4">
+        <img class="destroyer-size" src="../../../assets/images/dest.png" alt="">
+      </div>
+      <div class="col-4">
+        <img class="destroyer-size" src="../../../assets/images/dest.png" alt="">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-3">
+        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
+      </div>
+      <div class="col-3">
+        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
+      </div>
+      <div class="col-3">
+        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
+      </div>
+      <div class="col-3">
+        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
+      </div>
+    </div>
+    <h1 class="pt-1 main-title">Remaining Ships: {{this.ships.length}}</h1>
+    <div class="row">
+      <div class="pt-2 d-flex justify-content-center">
+        <button type="button" class="btn btn-success button-options" (click)="newGame()">New game ⚓</button>
+      </div>
+      <div class="pt-3 d-flex justify-content-center">
+        <button type="button" class="btn btn-info button-options" (click)="showShips()">Surrender 🤷‍♂️</button>
+      </div>
+      <div class="pt-3 d-flex justify-content-center">
+        <button type="button" class="btn btn-danger button-options"  [routerLink]="'/'">Exit ↩️</button>
+      </div>
+    </div>
   </div>
 </div>

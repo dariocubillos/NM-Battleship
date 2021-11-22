@@ -1,1 +1,20 @@
-<p>main-menu works!</p>
+<div class="d-flex justify-content-center main-menu-logo ">
+  🚢
+</div>
+<div class="container-main-menu">
+  <div class="card bg-light mb-3 card-main-menu">
+    <div class="card-header card-header-main-menu" ><h3>Main menu</h3></div>
+    <div class="card-body">
+      <div class="pt-2 d-flex justify-content-center">
+        <button type="button" class="btn btn-success button-main-menu" [routerLink]="'/board'">Start ⚓</button>
+      </div>
+      <div class="pt-4 d-flex justify-content-center">
+        <button type="button" class="btn btn-primary button-main-menu" [routerLink]="'/scores'">Scores🏅</button>
+      </div>
+      <div class="pb-2 pt-4 d-flex justify-content-center">
+        <button type="button" class="btn btn-warning button-main-menu" [routerLink]="'/options'">Options ⚙</button>
+      </div>
+    </div>
+  </div>
+</div>
+

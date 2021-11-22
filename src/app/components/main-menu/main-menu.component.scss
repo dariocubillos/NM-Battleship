@@ -1,0 +1,30 @@
+.main-title {
+  text-align: center;
+}
+
+.card {
+  margin: 0 auto;
+  float: none;
+}
+
+.container-main-menu {
+  padding-top: 5vh;
+}
+
+.card-main-menu {
+  max-width: 40rem;
+  text-align: center;
+}
+
+.card-header-main-menu {
+  background-color: #006994;
+  color: white;
+}
+
+.main-menu-logo {
+  font-size:10vw;
+}
+
+.button-main-menu::ng-deep {
+  width: 20vw;
+}
