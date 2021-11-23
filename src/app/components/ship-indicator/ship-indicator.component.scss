@@ -1,0 +1,31 @@
+.aircraft-size{
+  width: 30vw;
+}
+
+.cruiser-size {
+  width: 25vw;
+}
+
+.frigate-size{
+  width: 5vw;
+}
+
+.destroyer-size{
+  width: 10vw;
+}
+
+.crossed { // for visual ship deleted
+  background:
+  linear-gradient(to top left,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,0) calc(50% - 10px),
+      rgb(255, 0, 0) 50%,
+      rgba(0,0,0,0) calc(50% + 10px),
+      rgba(0,0,0,0) 100%),
+  linear-gradient(to top right,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,0) calc(50% - 10px),
+      rgb(255, 0, 0) 50%,
+      rgba(0,0,0,0) calc(50% + 10px),
+      rgba(0,0,0,0) 100%);
+}

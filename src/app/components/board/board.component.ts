@@ -1,8 +1,11 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { BoardSize } from '../../enums/board-size-enum';
+import { GameStatus } from '../../enums/game-status.enum';
 import { ShipName } from '../../enums/ship-names-enum';
 import { Cordinate } from '../../interfaces/cordinate';
-import { Ship } from '../../models/ship.model';
+import { Ship } from '../../interfaces/ship.model';
+import { ScoresService } from '../../services/scores.service';
+import { ShipIndicatorComponent } from '../ship-indicator/ship-indicator.component';
 declare var $: any;
 
 @Component({
@@ -10,10 +13,12 @@ declare var $: any;
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss']
 })
-export class BoardComponent implements OnInit, AfterViewInit {
+export class BoardComponent implements  AfterViewInit {
 
+  @ViewChild('shipIndicator') shipIndicator: ShipIndicatorComponent | undefined;
   @ViewChild('customTurnsInput') customTurns: ElementRef | undefined;
 
+  gameStatus: GameStatus = GameStatus.notCompleted;
   ships: Ship[] = [];
   usedCordinates: Cordinate[] =[];
   remainingTurns: number = 0;
@@ -23,23 +28,18 @@ export class BoardComponent implements OnInit, AfterViewInit {
   @HostListener('document:click', ['$event'])
   clickout() {
     if (this.remainingTurns === 0){
-      setTimeout(() => { $("#initGameModal").modal('show');}, 200);
+      setTimeout(() => { $("#initGameModal").modal('show');}, 150);
     }
   }
 
-  constructor() {
+  constructor(private resultService:ScoresService) {
     this.setupShips();
   }
 
-
   ngAfterViewInit(): void {
-    this.showShips(); // for test
     $("#initGameModal").modal('show');
   }
 
-  ngOnInit(): void {
-
-  }
   newGame(){
     this.resetGame();
   }
@@ -49,6 +49,7 @@ export class BoardComponent implements OnInit, AfterViewInit {
     this.usedCordinates=[];
     this.remainingTurns = 0;
     this.remainingObjetives = BoardSize.objectives;
+    this.shipIndicator?.resetShips();
     this.cleanBoard();
     this.setupShips();
   }
@@ -73,9 +74,15 @@ export class BoardComponent implements OnInit, AfterViewInit {
   }
 
   clickByUser(positionY: any, positionX: any): void {
-    let found= false;
-    let shipSelected;
-    let removeShipCordinate;
+    let found = false;
+    let shipSelected: Ship = {
+      name: '',
+      position: []
+    };
+    let removeShipCordinate: Cordinate = {
+      x: 0,
+      y: 0
+    };
     if (this.remainingTurns > -1) {
       this.remainingTurns--;
     }
@@ -91,21 +98,33 @@ export class BoardComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    if (!found) {
+    if (!found && document.getElementById(`${positionX}-${positionY}`)?.style.getPropertyValue('background-color') !== 'red') {
       document.getElementById(`${positionX}-${positionY}`)?.style.setProperty('background-color','gray');
     }else {
-      // remove a cordinate of ship and check if we can cross the ship
+      this.removeShipCordinate(shipSelected, removeShipCordinate);
     }
     this.checkEnd();
   }
 
   showShips():void {
+    this.cleanBoard();
     this.ships.forEach(ship => {
       for (let index = 0; index < ship.position.length; index++) {
         const cordinate = ship.position[index];
         document.getElementById(`${cordinate.x}-${cordinate.y}`)?.style.setProperty('background-color',this.getVisualShip(ship.name));
       }
     });
+  }
+
+  private removeShipCordinate(shipSelected: Ship, removeShipCordinate: Cordinate ):void  {
+    const indexShip = this.ships.indexOf(shipSelected, 0);
+    const indexCortinate = this.ships[indexShip]?.position.indexOf(removeShipCordinate,0);
+    if (indexCortinate > -1) {
+      this.ships[indexShip].position.splice(indexCortinate, 1);
+    }
+    if (this.ships[indexShip]?.position.length === 0) {
+      this.shipIndicator?.crossOutImage(this.ships[indexShip].name)
+    }
   }
 
   private cleanBoard():void {
@@ -118,14 +137,29 @@ export class BoardComponent implements OnInit, AfterViewInit {
 
   private checkEnd(): void {
     if (this.remainingObjetives === 0) {
-      console.log('WIN!!!'); // add the win mensage
+      this.gameStatus = GameStatus.win;
+      this.saveScore();
+      console.log(this.resultService.getData());
       this.resetGame();
     }else {
       if (this.remainingTurns === 0) {
-        console.log('LOSE!!!'); // add the lose mensage
+        this.gameStatus = GameStatus.lose;
+        this.saveScore();
+        console.log(this.resultService.getData());
         this.resetGame();
       }
     }
+  }
+
+  private saveScore():void {
+    this.resultService.setData(
+      {
+        id: this.resultService.getData().length === 0 ? 0 : this.resultService.getData().length-1,
+        result: this.gameStatus,
+        remainingTurns: this.remainingTurns,
+        date: new Date().toLocaleString()
+      }
+    );
   }
 
   private getVisualShip(shipName:string): string {
@@ -190,7 +224,6 @@ export class BoardComponent implements OnInit, AfterViewInit {
     }
     return result;
   }
-
 
   private getCoordinates(shipSize: number): Cordinate[] {
     let result: Cordinate[] = []

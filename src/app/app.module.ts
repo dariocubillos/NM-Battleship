@@ -7,6 +7,7 @@ import { BoardComponent } from './components/board/board.component';
 import { MainMenuComponent } from './components/main-menu/main-menu.component';
 import { ScoresComponent } from './components/scores/scores.component';
 import { OptionsComponent } from './components/options/options.component';
+import { ShipIndicatorComponent } from './components/ship-indicator/ship-indicator.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { OptionsComponent } from './components/options/options.component';
     BoardComponent,
     MainMenuComponent,
     ScoresComponent,
-    OptionsComponent
+    OptionsComponent,
+    ShipIndicatorComponent
   ],
   imports: [
     BrowserModule,

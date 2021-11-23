@@ -3,9 +3,16 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="initGameTitle">Choose difficulty</h4>
+        <h3 class="modal-title" id="initGameTitle">Choose difficulty</h3>
       </div>
-      <p class="font-weight-bold pt-4 initgame-text">Choose an option to start the game.</p>
+      <div *ngIf="gameStatus === 'Win'; then winBlock"></div>
+      <ng-template #winBlock>
+        <div class="pt-2 win-lose-display">You win 😃, do you want to play again?</div>
+      </ng-template>
+      <div *ngIf="gameStatus === 'Lose'; then loseBlock"></div>
+      <ng-template #loseBlock>
+        <div class="pt-2 win-lose-display">You lose 😔, do you want to play again?</div>
+      </ng-template>
       <div class="modal-body">
         <div class="pt-1 d-flex justify-content-center">
           <button type="button" class="btn btn-primary button-difficulty" (click)="saveTurns(-1);">Easy 👶 - ∞ turns</button>
@@ -43,46 +50,7 @@
   </div>
   <div class="col-4">
     <h1 class="main-title">Remaining turns: {{remainingTurns < 0 ? '∞': remainingTurns}}</h1>
-    <div class="row">
-      <div class="col-12">
-        <img class="aircraft-size" src="../../../assets/images/airc.png" alt="">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <img  class="cruiser-size" src="../../../assets/images/cru.png" alt="">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <img  class="cruiser-size" src="../../../assets/images/cru.png" alt="">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-4">
-        <img class="destroyer-size" src="../../../assets/images/dest.png" alt="">
-      </div>
-      <div class="col-4">
-        <img class="destroyer-size" src="../../../assets/images/dest.png" alt="">
-      </div>
-      <div class="col-4">
-        <img class="destroyer-size" src="../../../assets/images/dest.png" alt="">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-3">
-        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
-      </div>
-      <div class="col-3">
-        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
-      </div>
-      <div class="col-3">
-        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
-      </div>
-      <div class="col-3">
-        <img class="frigate-size" src="../../../assets/images/frig.png" alt="">
-      </div>
-    </div>
+    <app-ship-indicator id="shipIndicator" #shipIndicator></app-ship-indicator>
     <h1 class="pt-1 main-title">Remaining Ships: {{this.ships.length}}</h1>
     <div class="row">
       <div class="pt-2 d-flex justify-content-center">

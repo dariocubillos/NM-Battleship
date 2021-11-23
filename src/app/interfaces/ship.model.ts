@@ -1,4 +1,4 @@
-import { Cordinate } from "../interfaces/cordinate";
+import { Cordinate } from "./cordinate";
 
 export interface Ship {
   name: string;
