@@ -12,6 +12,10 @@ export class ShipIndicatorComponent {
 
   constructor() { }
 
+  /**
+   * Select which type of vessel is to be crossed out
+   * @param shipName
+   */
   crossOutImage(shipName:string):void {
     switch (shipName) {
       case ShipName.aircraftCarrier:
@@ -32,6 +36,9 @@ export class ShipIndicatorComponent {
     }
   }
 
+  /**
+   * Resets the status of ships
+   */
   resetShips():void {
     this.aircraf?.nativeElement.classList.remove('crossed');
     this.crossInShipDiv(document.getElementsByClassName('crusierDiv'), false);
@@ -39,6 +46,11 @@ export class ShipIndicatorComponent {
     this.crossInShipDiv(document.getElementsByClassName('frigateDiv'), false);
   }
 
+  /**
+   *
+   * @param arrayDivs
+   * @param addCross
+   */
   private crossInShipDiv(arrayDivs:HTMLCollectionOf<Element>, addCross:boolean = true):void {
     for (let i = 0; i < arrayDivs.length; i++) {
       if (!arrayDivs[i].classList.contains('crossed') && addCross) {

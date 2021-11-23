@@ -7,11 +7,11 @@
       </div>
       <div *ngIf="gameStatus === 'Win'; then winBlock"></div>
       <ng-template #winBlock>
-        <div class="pt-2 win-lose-display">You win 😃, do you want to play again?</div>
+        <div class="pt-2 win-lose-display initgame-text">You win 😃, do you want to play again?</div>
       </ng-template>
       <div *ngIf="gameStatus === 'Lose'; then loseBlock"></div>
       <ng-template #loseBlock>
-        <div class="pt-2 win-lose-display">You lose 😔, do you want to play again?</div>
+        <div class="pt-2 win-lose-display initgame-text">You lose 😔, do you want to play again?</div>
       </ng-template>
       <div class="modal-body">
         <div class="pt-1 d-flex justify-content-center">

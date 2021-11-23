@@ -30,6 +30,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('NM-Battleship app is running!');
+    const text = compiled.querySelector('.main-title')?.textContent;
+    expect(text).toContain('NM-Battleship');
   });
 });

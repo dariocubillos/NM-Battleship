@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ShipIndicatorComponent } from '../ship-indicator/ship-indicator.component';
 
 import { BoardComponent } from './board.component';
 
@@ -8,7 +9,7 @@ describe('BoardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BoardComponent ]
+      declarations: [ BoardComponent, ShipIndicatorComponent ]
     })
     .compileComponents();
   });
@@ -22,4 +23,20 @@ describe('BoardComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should be ships', () => {
+    component.newGame();
+    expect(component.ships.length > 0).toBeTrue();
+  });
+
+  it('should be ships 10', () => {
+    component.newGame();
+    expect(component.ships.length === 10).toBeTrue();
+  });
+
+  it('should be ships on reset', () => {
+    component.resetGame();
+    expect(component.ships.length === 10).toBeTrue();
+  });
+
 });

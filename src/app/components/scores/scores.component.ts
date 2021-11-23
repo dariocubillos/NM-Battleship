@@ -12,7 +12,16 @@ export class ScoresComponent {
   constructor(private resultService:ScoresService) {
    }
 
+   /**
+    *
+    * @returns  GameEnd[]
+    */
   getScores(): GameEnd[] {
     return this.resultService.getData();
   }
+
+  checkInfinite(turns:number):string{
+    return turns === -1 ? '∞': turns.toString();
+  }
+
 }

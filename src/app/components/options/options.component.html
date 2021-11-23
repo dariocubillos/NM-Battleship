@@ -1,1 +1,19 @@
-<p>options works!</p>
+<div class="pt-3 d-flex justify-content-center">
+    <h3>Options</h3>
+</div>
+<div class="pt-3 d-flex justify-content-center">
+
+</div>
+<div class="pt-3 d-flex justify-content-center">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox"  [checked]="darkMode$ | async"  (change)="onToggle()" value="">
+    <label class="form-check-label" for="flexCheckDefault">
+      <div *ngIf="darkMode$ | async; then normalModeDiv else darkModeDiv"></div>
+      <ng-template #normalModeDiv>Remove Dark Mode 🌙</ng-template>
+      <ng-template #darkModeDiv>Activate Dark Mode ☀️</ng-template>
+    </label>
+  </div>
+</div>
+<div class="pt-3 d-flex justify-content-center">
+  <button type="button" class="btn btn-danger button-options"  [routerLink]="'/'">Exit ↩️</button>
+</div>

@@ -26,9 +26,9 @@ export class BoardComponent implements  AfterViewInit {
   $: any = $;
 
   @HostListener('document:click', ['$event'])
-  clickout() {
+  clickout(): void {
     if (this.remainingTurns === 0){
-      setTimeout(() => { $("#initGameModal").modal('show');}, 150);
+      setTimeout(() => { $("#initGameModal")?.modal('show');}, 200);
     }
   }
 
@@ -37,10 +37,12 @@ export class BoardComponent implements  AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    $("#initGameModal").modal('show');
+    if ($("#initGameModal").modal !== undefined) {
+      $("#initGameModal").modal('show');
+    }
   }
 
-  newGame(){
+  newGame():void {
     this.resetGame();
   }
 
@@ -62,17 +64,31 @@ export class BoardComponent implements  AfterViewInit {
     this.ships.push(...this.addManyShips(ShipName.frigate, 4));
   }
 
+  /**
+   *
+   * @param turns
+   */
   saveTurns(turns:number | string):void {
     if (turns !== 0 && turns !== '') {
       this.remainingTurns = Number(turns);
-      $("#initGameModal").modal('hide');
+      $("#initGameModal")?.modal('hide');
     }
   }
 
+  /**
+   *
+   * @param seed
+   * @returns Array<any>
+   */
   counter(seed: number): Array<any> {
     return new Array(seed);
   }
 
+  /**
+   *
+   * @param positionY
+   * @param positionX
+   */
   clickByUser(positionY: any, positionX: any): void {
     let found = false;
     let shipSelected: Ship = {
@@ -106,6 +122,9 @@ export class BoardComponent implements  AfterViewInit {
     this.checkEnd();
   }
 
+  /**
+   * Shows the ships when surrendering
+   */
   showShips():void {
     this.cleanBoard();
     this.ships.forEach(ship => {
@@ -116,6 +135,11 @@ export class BoardComponent implements  AfterViewInit {
     });
   }
 
+  /**
+   *
+   * @param shipSelected
+   * @param removeShipCordinate
+   */
   private removeShipCordinate(shipSelected: Ship, removeShipCordinate: Cordinate ):void  {
     const indexShip = this.ships.indexOf(shipSelected, 0);
     const indexCortinate = this.ships[indexShip]?.position.indexOf(removeShipCordinate,0);
@@ -127,6 +151,9 @@ export class BoardComponent implements  AfterViewInit {
     }
   }
 
+  /**
+   * The board is cleaned
+   */
   private cleanBoard():void {
     for (let x = 0; x <= 9; x++) {
       for (let y = 0; y <= 9; y++) {
@@ -135,6 +162,9 @@ export class BoardComponent implements  AfterViewInit {
     }
   }
 
+  /**
+   * Check if the game is finished
+   */
   private checkEnd(): void {
     if (this.remainingObjetives === 0) {
       this.gameStatus = GameStatus.win;
@@ -151,7 +181,10 @@ export class BoardComponent implements  AfterViewInit {
     }
   }
 
-  private saveScore():void {
+  /**
+   * save game in service
+   */
+  private saveScore(): void {
     this.resultService.setData(
       {
         id: this.resultService.getData().length === 0 ? 0 : this.resultService.getData().length-1,
@@ -162,6 +195,11 @@ export class BoardComponent implements  AfterViewInit {
     );
   }
 
+  /**
+   *
+   * @param shipName
+   * @returns string
+   */
   private getVisualShip(shipName:string): string {
     switch (shipName) {
       case ShipName.aircraftCarrier:
@@ -178,6 +216,12 @@ export class BoardComponent implements  AfterViewInit {
     }
   }
 
+  /**
+   *
+   * @param nameShip
+   * @param quantity
+   * @returns Ship[]
+   */
   private addManyShips(nameShip:string, quantity:number): Ship[] {
     let result: Ship[] = [];
     for (let i = 0; i < quantity; i++) {
@@ -186,7 +230,6 @@ export class BoardComponent implements  AfterViewInit {
       do {
         for (const cordinate of tempShip.position) {
           if (this.checkPlaneXY(this.usedCordinates, cordinate)) {
-            console.log("Rejected!!!!!!!!!");
             repeted = true;
             tempShip ={name:nameShip, position: this.getPosition(nameShip)};
           }else{
@@ -201,8 +244,12 @@ export class BoardComponent implements  AfterViewInit {
     return result;
   }
 
+  /**
+   *
+   * @param shipName
+   * @returns  Cordinate[]
+   */
   private getPosition(shipName: string): Cordinate[] {
-
     let result: Cordinate[] = [];
 
     switch (shipName) {
@@ -225,6 +272,11 @@ export class BoardComponent implements  AfterViewInit {
     return result;
   }
 
+  /**
+   *
+   * @param shipSize
+   * @returns Cordinate[]
+   */
   private getCoordinates(shipSize: number): Cordinate[] {
     let result: Cordinate[] = []
     result.push({
@@ -248,6 +300,12 @@ export class BoardComponent implements  AfterViewInit {
     return result;
   }
 
+  /**
+   *
+   * @param cordinates actual positions
+   * @param newCordinate new element to add
+   * @returns boolean
+   */
   private checkPlaneXY(cordinates: Cordinate[], newCordinate: Cordinate): boolean {
     return cordinates.some(cordinate => cordinate.x === newCordinate.x  && cordinate.y ===  newCordinate.y);
   }
@@ -256,7 +314,7 @@ export class BoardComponent implements  AfterViewInit {
    *
    * @param min number range
    * @param max number range
-   * @returns ramdom number
+   * @returns  number
    */
   private randomIntFromInterval(min:number, max:number):number  {
     min = min < BoardSize.min ? BoardSize.min: min;
